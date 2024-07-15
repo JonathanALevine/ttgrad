@@ -2,7 +2,8 @@ from typing import Final, Dict, Callable, Any, List, Optional
 from llvmlite import ir
 from tinygrad.dtype import DType, PtrDType, dtypes
 from tinygrad.ops import Op, UnaryOps, BinaryOps, TernaryOps
-from tinygrad.codegen.uops import UOps, UOp, UOpGraph
+from tinygrad.codegen.uops import UOps, UOp
+from tinygrad.codegen.uopgraph import UOpGraph
 from tinygrad.renderer import Renderer
 
 MFLAGS = ('nsz', 'arcp', 'contract', 'afn', 'reassoc') # All from fast math, but nnan and ninf
@@ -86,10 +87,6 @@ class LLVMRenderer(Renderer):
     for a in func.args:
       if a.type.is_pointer: a.add_attribute("noalias")
 
-    # add the function attribute "no-nans-fp-math"="true", which informs llvm that it allowed to use vectorization optimizations
-    func.attributes._known = func.attributes._known.union(frozenset(['"no-nans-fp-math"="true"']))
-    func.attributes.add('"no-nans-fp-math"="true"')
-
     bb = [ir.IRBuilder(func.append_basic_block("entry"))]
     loop_blocks: List = []
     reduce_phis: List = []
@@ -152,7 +149,6 @@ class LLVMRenderer(Renderer):
           lvars[u] = code_for_op[args](bb[-1], *[lvars[x] for x in src], dtype if args not in (BinaryOps.CMPLT, BinaryOps.CMPNE) else src[0].dtype)
         elif uop in {UOps.CAST, UOps.BITCAST}: lvars[u] = cast(bb, lvars[src[0]], src[0].dtype, dtype, bitcast=uop is UOps.BITCAST)
         elif uop in {UOps.DEFINE_GLOBAL, UOps.DEFINE_VAR}: lvars[u] = func.args[buf_index[args]]
-        elif uop is UOps.SPECIAL: lvars[u] = lvars[args.expr]
         elif uop is UOps.CONST: lvars[u] = const(args, dtype)
         else: raise RuntimeError(f"failed to render {uop}")
 
