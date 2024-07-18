@@ -7,6 +7,7 @@ from tinygrad.dtype import ImageDType, dtypes, DType, PtrDType, ConstType
 from tinygrad.codegen.uops import UOps, UOp
 from tinygrad.codegen.uopgraph import UOpGraph
 from tinygrad.renderer import Renderer, TensorCore
+from typing import NamedTuple
 
 class CStyleLanguage(Renderer):
   kernel_prefix: str = ""
@@ -180,6 +181,10 @@ class CStyleLanguage(Renderer):
         else: raise RuntimeError(f"failed to render {u}")
 
     return self.render_kernel(name, kernel, bufs, uops)
+
+class MetalliumRenderer(CStyleLanguage):
+  device = "METALLIUM"
+  has_local = False
 
 class ClangRenderer(CStyleLanguage):
   device = "CLANG"

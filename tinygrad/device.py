@@ -11,7 +11,9 @@ from tinygrad.renderer import Renderer
 # **************** Device ****************
 
 class _Device:
-  def __init__(self) -> None: self._devices: List[str] = [x.stem[len("ops_"):].upper() for x in (pathlib.Path(__file__).parent/"runtime").iterdir() if x.stem.startswith("ops_")]  # noqa: E501
+  def __init__(self) -> None: 
+    self._devices: List[str] = [x.stem[len("ops_"):].upper() for x in (pathlib.Path(__file__).parent/"runtime").iterdir() if x.stem.startswith("ops_")]  # noqa: E501
+    print("self._devices: ", self._devices)
   @functools.lru_cache(maxsize=None)  # this class is a singleton, pylint: disable=method-cache-max-size-none
   def _canonicalize(self, device:str) -> str: return (device.split(":", 1)[0].upper() + ((":"+device.split(":", 1)[1]) if ':' in device else '')).replace(":0", "")   # noqa: E501
   # NOTE: you can't cache canonicalize in case Device.DEFAULT changes
@@ -28,8 +30,10 @@ class _Device:
   @functools.cached_property
   def DEFAULT(self) -> str:
     device_from_env: Optional[str] = functools.reduce(lambda val, ele: ele if getenv(ele) == 1 else val, self._devices, None)   # type: ignore
-    if device_from_env: return device_from_env
-    for device in ["METAL", "AMD", "NV", "CUDA", "GPU", "CLANG", "LLVM"]:
+    if device_from_env: 
+      print("device_from_env: ", device_from_env)
+      return device_from_env
+    for device in ["METAL", "AMD", "NV", "CUDA", "GPU", "CLANG", "LLVM", "METALLIUM"]:
       try:
         if self[device]:
           os.environ[device] = "1"   # we set this in environment for spawned children

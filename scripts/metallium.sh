@@ -2,4 +2,4 @@
 
 cd ~/dev/ttgrad
 
-CLANG=1 python3 tt/add.py
+METALLIUM=1 python3 tt/add.py

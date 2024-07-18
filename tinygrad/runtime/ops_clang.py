@@ -15,6 +15,9 @@ class ClangProgram:
   def __init__(self, name:str, lib:bytes):
     if DEBUG >= 6: cpu_objdump(lib)
     self.name, self.lib = name, lib
+
+    print("name: ", name)
+
     # write to disk so we can load it
     with tempfile.NamedTemporaryFile(delete=True) as cached_file_path:
       pathlib.Path(cached_file_path.name).write_bytes(lib)
@@ -24,5 +27,8 @@ class ClangProgram:
 
 class ClangDevice(Compiled):
   def __init__(self, device:str):
+
+    print("CLANGDevice ... DEVICE: ", device)
+
     from tinygrad.runtime.graph.clang import ClangGraph
     super().__init__(device, MallocAllocator, ClangRenderer(), ClangCompiler("compile_clang"), ClangProgram, ClangGraph)
