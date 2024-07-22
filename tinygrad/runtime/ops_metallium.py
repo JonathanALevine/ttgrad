@@ -11,6 +11,7 @@ BLUE = "\033[94m"
 
 class MetalliumCompiler(Compiler):
   def compile(self, src:str)->str:
+    print("src: ", src)
     return src
 
 class MetalliumProgram:

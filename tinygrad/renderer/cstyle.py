@@ -186,6 +186,9 @@ class MetalliumRenderer(CStyleLanguage):
   device = "METALLIUM"
   has_local = False
 
+  def render(self, name: str, uops: UOpGraph) -> str:
+    return ""
+
 class ClangRenderer(CStyleLanguage):
   device = "CLANG"
   supports_float4 = False
