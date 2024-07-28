@@ -187,6 +187,10 @@ class MetalliumRenderer(CStyleLanguage):
   has_local = False
 
   def render(self, name: str, uops: UOpGraph) -> str:
+
+    for idx, u in enumerate(uops):
+      print(idx, u)
+
     return ""
 
 class ClangRenderer(CStyleLanguage):
